@@ -1,19 +1,165 @@
-autoload -U compinit promptinit
-compinit
-promptinit
+set -o vi
 
-# This will set the default prompt to the walters theme
-prompt walters
-
-autoload -U compinit
-compinit
-
-# Aliases
+unalias egrep fgrep grep ls l. 2>/dev/null
+alias ll='ls --color=always -l'
+alias la='ls --color=always -la'
+alias ls='ls --color=always'
 alias grep='grep --color=auto'
 alias rgr='grep -ri --color=auto'
-alias ll='ls -al'
 alias gc='git commit'
 alias go='git checkout'
 alias gs='git status -s'
 alias reload=". ~/.zshrc && echo 'ZSH config reloaded from ~/.zshrc'"
 alias zshrc="vim ~/.zshrc && reload"
+alias ..='cd ..'
+alias ...='..;..'
+alias ....='...;..'
+alias fdm='cd $FDMAINAES'
+alias fds='cd ~/git/FdScripts'
+
+autoload -U colors && colors
+autoload zcalc
+
+export EDITOR='vim'
+export VISUAL='vim'
+export PAGER='less'
+export LESS=-MRXSi
+export FDMAINAES=$(cd ~/git/FdMainAes && pwd)
+
+unset beep
+set nobeep
+
+export HISTSIZE=256000
+export HISTFILE=~/.zsh_history
+export SAVEHIST=$HISTSIZE
+
+source ~/git/zsh-git-prompt/zshrc.sh
+export GIT_PROMPT_EXECUTABLE="haskell"
+
+export PATH=~/.local/bin:~/.bin:/usr/local/bin:/opt/autoliv/bin:"$PATH"
+
+export LC_NUMERIC=en_US
+
+KEYTIMEOUT=1
+WORDCHARS='*?_[]~&;!#$%^(){}<>'
+
+setopt extended_history
+setopt inc_append_history
+setopt hist_save_no_dups
+setopt hist_ignore_all_dups
+setopt share_history
+# setopt nomenu_complete
+# setopt bash_auto_list
+setopt interactivecomments
+setopt C_BASES OCTAL_ZEROES
+setopt EXTENDED_GLOB BARE_GLOB_QUAL
+
+# bindkey '^[[A' up-line-or-search
+# bindkey '^[[B' down-line-or-search
+# bindkey '^G' what-cursor-position
+
+bindkey '^I' expand-or-complete-prefix
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+bindkey '^R' history-incremental-pattern-search-backward
+bindkey '^S' history-incremental-pattern-search-forward
+bindkey -a u undo
+bindkey -a '^R' redo
+bindkey '^?' backward-delete-char
+bindkey '^H' backward-delete-char
+
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
+bindkey '^u' kill-whole-line
+bindkey '^w' backward-kill-word
+# bindkey '^s' kill-word
+bindkey '^k' kill-line
+bindkey '^d' delete-char
+
+bindkey '^P' up-history
+bindkey '^N' down-history
+bindkey '^F' forward-char
+bindkey '^B' backward-char
+
+bindkey -M vicmd 'v' edit-command-line
+bindkey -M vicmd '^v' visual-mode
+bindkey '^T' spell-word
+
+bindkey '^[[Z' reverse-menu-complete
+
+stty start '^-' stop '^-'
+bindkey "^Q" push-input
+
+typeset -A key
+key[Home]=${terminfo[khome]}
+key[End]=${terminfo[kend]}
+key[Insert]=${terminfo[kich1]}
+key[Delete]=${terminfo[kdch1]}
+key[Up]=${terminfo[kcuu1]}
+key[Down]=${terminfo[kcud1]}
+key[Left]=${terminfo[kcub1]}
+key[Right]=${terminfo[kcuf1]}
+key[PageUp]=${terminfo[kpp]}
+key[PageDown]=${terminfo[knp]}
+# setup key accordingly
+[[ -n "${key[Home]}"    ]]  && bindkey  "${key[Home]}"    beginning-of-line
+[[ -n "${key[End]}"     ]]  && bindkey  "${key[End]}"     end-of-line
+[[ -n "${key[Insert]}"  ]]  && bindkey  "${key[Insert]}"  overwrite-mode
+[[ -n "${key[Delete]}"  ]]  && bindkey  "${key[Delete]}"  delete-char
+[[ -n "${key[Up]}"      ]]  && bindkey  "${key[Up]}"      up-line-or-history
+[[ -n "${key[Down]}"    ]]  && bindkey  "${key[Down]}"    down-line-or-history
+[[ -n "${key[Left]}"    ]]  && bindkey  "${key[Left]}"    backward-char
+[[ -n "${key[Right]}"   ]]  && bindkey  "${key[Right]}"   forward-char
+
+autoload -U edit-command-line
+zle -N edit-command-line
+
+vim_ins_mode="%{$fg[cyan]%}-- INFOGA --%{$reset_color%}"
+vim_cmd_mode="%{$fg[green]%}-- NORMAL --%{$reset_color%}"
+vim_mode=$vim_ins_mode
+function zle-line-init zle-keymap-select zle-line-finish {
+    RPS1="${${KEYMAP/vicmd/$vim_cmd_mode}/(main|viins)/$vim_ins_mode}"
+    RPS2=$RPS1
+    zle reset-prompt
+    zle -R
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
+zle -N zle-line-finish
+setopt transient_rprompt
+RPS1="${${KEYMAP/vicmd/$vim_cmd_mode}/(main|viins)/$vim_ins_mode}"
+
+# terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
+# function zle-line-init zle-keymap-select {
+#     PS1_2="${${KEYMAP/vicmd/$vim_cmd_mode}/(main|viins)/$vim_ins_mode}"
+#     PS1="%{$terminfo_down_sc$PS1_2$terminfo[rc]%}%~ %# "
+#     zle reset-prompt
+# }
+# preexec () { print -rn -- $terminfo[el]; }
+
+# PROMPT="%c %% "
+PROMPT='%(?/%{$fg[white]%}/%{$fg[red]%})%c %b$(git_super_status) %% % %{$reset_color%}'
+
+autoload -Uz promptinit
+promptinit
+
+fpath=(~/.zsh $fpath)
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+# __git_files () {
+#        _wanted files expl 'local files' _files
+# }
+# compdef -d git
+
+zmodload zsh/mapfile
+zmodload zsh/mathfunc
+
+# Development environment
+export LANG=en_US.UTF-8
+export O_DRIVE=/mnt/o/GRP
+export C_Libs=/home/fsvenson/Documents/CLibs
+export CODE_DEPS=/home/fsvenson/Documents/CodeDeps
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
