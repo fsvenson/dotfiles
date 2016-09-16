@@ -290,7 +290,7 @@ set t_Co=256
 set background=dark
 colorscheme hybrid
 
-set guifont=Inconsolata\ Medium\ 9
+set guifont=Inconsolatazi4\ Medium\ 10
 syntax on
 
 " Octave syntax
