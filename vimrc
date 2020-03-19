@@ -1,42 +1,60 @@
+set shell=bash
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-Plugin 'L9'
+call plug#begin()
+Plug 'tpope/vim-fugitive'
 " Git plugin not hosted on GitHub
-Plugin 'wincent/command-t'
-Plugin 'scrooloose/syntastic'
-Plugin 'scrooloose/nerdtree'
-" Plugin 'spolu/dwm.vim'
-Plugin 'Yggdroot/indentLine'
-Plugin 'godlygeek/tabular'
-Plugin 'flazz/vim-colorschemes'
-Plugin 'morhetz/gruvbox'
-Plugin 'Haron-Prime/Antares'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'szw/vim-tags'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'rdnetto/YCM-Generator'
-Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plugin 'junegunn/fzf.vim'
+Plug 'wincent/command-t'
+Plug 'Yggdroot/indentLine'
+Plug 'godlygeek/tabular'
+Plug 'flazz/vim-colorschemes'
+Plug 'morhetz/gruvbox'
+Plug 'Haron-Prime/Antares'
+Plug 'altercation/vim-colors-solarized'
+" Plug 'szw/vim-tags'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+" Plug 'davidhalter/jedi-vim'
+Plug 'majutsushi/tagbar'
+Plug 'Konfekt/FastFold'
+Plug 'airblade/vim-gitgutter'
+Plug 'eparreno/vim-matchit'
+Plug 'idbrii/vim-hiinterestingword'   " allows for highlighting interesting words in sepparate colors
+Plug 'junegunn/vim-peekaboo'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'spiiph/vim-space'
+Plug 'ton/vim-bufsurf'
+Plug 'tpope/vim-surround'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-rsi', { 'on': [] }
+Plug 'unblevable/quick-scope'         " shows good targets for f/t to move far on line in specific color
+Plug 'vim-scripts/camelcasemotion'
+Plug 'mbbill/undotree'
+Plug 'kana/vim-operator-user'
+Plug 'haya14busa/vim-operator-flashy'
+Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
+" Plug 'w0rp/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'ludovicchabant/vim-gutentags'
+" Plug 'skywind3000/gutentags_plus'
+Plug 'chrisbra/matchit'
+Plug 'daeyun/vim-matlab', { 'as': 'neovim-matlab' }
+Plug 'tdehaeze/matlab-vim'
+Plug 'TheZoq2/neovim-auto-autoread'
+" Plug 'autozimu/LanguageClient-neovim', {
+"             \ 'branch': 'next',
+"             \ 'do': 'bash install.sh',
+"             \ }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()            " required
+" filetype plugin on
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
-"filetype plugin on
 "
 " Brief help
 " :PluginList       - lists configured plugins
@@ -46,6 +64,12 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
+
+set autoread
+"Autoreload files when changed externally
+" if has('nvim') "Prevent errors when using standard vim
+"   autocmd VimEnter * AutoreadLoop
+" endif
 
 " auto-reload
 augroup myvimrc
@@ -98,6 +122,15 @@ set wildmode=longest,list,full   " Bash style completion
 set wildignorecase "When set case is ignored when completing file names and directories
 set hidden        " When on a buffer becomes hidden when it is abandoned
 set showcmd       " Show (partial) command in the last line of the screen
+set ttyfast                    " 'smooth' scrolling
+set virtualedit=block          " allow cursor to be moved into empty space in visual
+set splitbelow                 " intuitive split placement
+set splitright                 " intuitive split placement
+set backspace=2
+
+" Automatically resize vertical splits.
+autocmd WinEnter * :set winfixheight
+autocmd WinEnter * :wincmd =
 
 " Cursor color
 "  if &term =~ "xterm\\|rxvt|terminator"
@@ -132,21 +165,73 @@ set shiftwidth=3     " Number of spaces to use for each step of (auto)indent
 set tabstop=2        " Number of spaces that a <Tab> in the file counts for
 set smarttab         " <Tab> in front of a line indents to 'shiftwidth'
 set linebreak        " Wrap lines at a char in 'breakat' rather than last char
-set textwidth=0      " Maximum width of text that is being inserted
+set textwidth=120    " Maximum width of text that is being inserted
 set formatoptions-=c " Don't wrap comments
 set autoindent       " Auto indent
 set smartindent      " Do smart autoindenting when starting a new line
 set nowrap           " Wrap lines
 set number
-set cursorline
+set cursorline       " highlights the line cursor is at
+set cursorcolumn     " highlights the column cursor is at
+set formatoptions-=t " disable automatic linebreak at textwidth for non-comments
+set formatoptions-=c " disable automatic linebreak at textwidth for comments
+set formatoptions+=r
+set formatoptions+=q
+set formatoptions+=o
+set formatoptions+=l
+
+" cursorcolumn only in active window
+autocmd WinEnter * setlocal cursorcolumn
+autocmd WinLeave * setlocal nocursorcolumn
+
+" relative number only in active window
+autocmd WinEnter * setlocal relativenumber
+autocmd WinLeave * setlocal norelativenumber
+
+" Copy/Paste with os buffer
+noremap <leader>y "+y
+noremap <leader>Y "+y$
+noremap <leader>p "+p
+noremap <leader>P "+P
+noremap <leader>d "+d
+noremap <leader>D "+D
+
+" Y consistent with D
+" nnoremap Y 0y$
+
+" operator flashy - flashes the target of a y<target> command
+map y <Plug>(operator-flashy)
+" nmap Y <Plug>(operator-flashy)$
+
+" center window after jumping forward
+nnoremap n nzz
+nnoremap } }zz
+nnoremap { {zz
+
+" swap ^$ with HL (move to fourth row from top/bottom)
+nnoremap H ^
+nnoremap ^ H
+nnoremap L $
+nnoremap $ L
+
+" move by row rather than line
+nnoremap j gj
+nnoremap k gk
+" reverse swap
+nnoremap gj j
+nnoremap gk k
+
+" Insert and Append on wrapped lines
+nnoremap gI g0i
+nnoremap gA g$i
 
 set guioptions=aegitc
-nnoremap <leader>m :NERDTreeToggle<CR>
 nmap <silent> <A-Up> :wincmd k<CR>
 nmap <silent> <A-Down> :wincmd j<CR>
 nmap <silent> <A-Left> :wincmd h<CR>
 nmap <silent> <A-Right> :wincmd l<CR>
 
+" buffer movement
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
@@ -164,22 +249,18 @@ if has("autocmd")
   filetype plugin indent on
   augroup vimrcEx
   au!
-
   autocmd FileType text setlocal textwidth=78
-
 " jump to last known position
   autocmd BufReadPost *
     \ if line("'\"")  <= line("$") |
     \      exec "normal g`\"" |
     \ endif
-
   augroup END
-
 else
-
    set autoindent
-
 endif
+
+autocmd FileType python setlocal shiftwidth=4 tabstop=2
 
 " Whitespace handling
 match Todo /\s\+$/
@@ -200,6 +281,46 @@ augroup END
 
 set noshowmode
 
+nnoremap <silent><C-n> :call ToggleRelativeNumber()<cr>
+
+" toggle relative number for lines
+function! ToggleRelativeNumber()
+    if(&relativenumber == 1)
+        set relativenumber!
+        set number
+    else
+        set relativenumber
+    endif
+endfunc
+
+" {{{ EasyAlign "
+" Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
+vmap <Enter> <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+" Don't add spaces around separator
+let g:easy_align_left_margin = 0
+let g:easy_align_right_margin = 0
+" }}} EasyAlign "
+
+" {{{ word motions inside camel/snake case"
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+sunmap w
+sunmap b
+sunmap e
+" }}} word motions inside camel/snake case"
+
+" {{{ GitGutter Sign colors '
+highlight GitGutterAdd          ctermbg=232 ctermfg=22
+highlight GitGutterChange       ctermbg=232 ctermfg=yellow
+highlight GitGutterDelete       ctermbg=232 ctermfg=red
+highlight GitGutterChangeDelete ctermbg=232 ctermfg=yellow
+" }}} GitGutter Sign colors "
+"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => files, backups and undo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -219,27 +340,27 @@ let g:gundo_right=1
 let g:gundo_help=0
 
 nnoremap <Leader>u :UndotreeToggle<CR>
-let g:undotree_SplitLocation = 'botright'
+let g:undotree_WindowLayout = 'botright'
 let g:undotree_SetFocusWhenToggle = 1
 let g:undotree_DiffpanelHeight = 20
 
 " nnoremap <silent> <C-P> :FZF<CR>
 command! FZFag call fzf#run({
-            \ 'source': 'ag -g"" .',
+            \ 'source': 'list-files . ../../../bazel-bin/external ../../',
             \ 'sink': 'e',
             \ 'down': '40%',
             \ 'options': '--expect=ctrl-t,ctrl-v,ctrl-x'})
 nnoremap <silent> <C-P> :FZFag<CR>
 " nnoremap <silent> <C-P> :FZF<CR>
 " let g:ctrlp_match_window = 'max:32'
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard']
-let g:ctrlp_max_files = 0         " Set no max file limit
-let g:ctrlp_working_path_mode = 0 " Search from current directory instead of project root
-let g:ctrlp_clear_cache_on_exit = 1
-let g:ctrlp_custom_ignore = {
-    \ 'file': '\v\.m$',
-    \ 'dir':  '\v[\/](\.git$|Build|BuildScripts)'
-    \ }
+" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard']
+" let g:ctrlp_max_files = 0         " Set no max file limit
+" let g:ctrlp_working_path_mode = 0 " Search from current directory instead of project root
+" let g:ctrlp_clear_cache_on_exit = 1
+" let g:ctrlp_custom_ignore = {
+"     \ 'file': '\v\.m$',
+"     \ 'dir':  '\v[\/](\.git$|Build|BuildScripts)'
+"     \ }
 
 """"""""""""""""""""""""""""""
 " => Statusline
@@ -250,7 +371,7 @@ set laststatus=2   " Always hide the statusline
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
 
 function! CurDir()
-    let curdir = substitute(getcwd(), '/Users/noring', "~", "g")
+    let curdir = substitute(getcwd(), '/Users/fsvenson', "~", "g")
     return curdir
 endfunction
 
@@ -270,8 +391,46 @@ let g:tagbar_compact=1 " Omit short help at the top
 let g:tagbar_autoclose=1
 let g:tagbar_width=32
 
-let g:ycm_confirm_extra_conf = 0
+" {{{ Completion
+" let g:ycm_confirm_extra_conf = 0
+" let g:ycm_server_python_interpreter = '/usr/bin/python2'
+" let g:ycm_goto_buffer_command = 'horizontal-split'
+" always fill location list with ycm errors/warnings
+" let g:ycm_always_populate_location_list = 0
+" let g:ycm_auto_trigger=1
+" }}} YouCompleteMe
+" let g:deoplete#enable_at_startup = 1
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" }}} Completion
 
+" {{{ Location Quickfix
+" toggle location and quickfix lists
+" mnemonic: list/ ( quick | location )
+nnoremap <leader>ll :call ToggleLocationList()<CR>
+nnoremap <leader>lq :call ToggleQuickfixList()<CR>
+" }}} Location Quickfix
+
+ " let g:syntastic_python_checkers = ['flake8']
+ " let g:syntastic_python_flake8_args='--ignore=E501'
+ " let g:syntastic_python_flake8_exec = '/usr/bin/flake8'
+au! BufRead,BufNewFile *.json set filetype=json
+
+" Ignore line too long warnings
+" let g:ale_linters = {
+" \   'matlab': ['mlint'],
+" \   'json':   ['fixjson'],
+" \   'sh':     ['shellcheck'],
+" \}
+" " \   'c':      ['cquery'],
+" " \   'cpp':    ['cquery'],
+" let g:ale_python_pylint_options = '--max-line-length=120 --disable=C0103'
+" let g:ale_linters_explicit = 1
+
+set runtimepath+=/home/fsvenson/git/VisionSoftware/Application/FdMainAes/ExtDeps/AesScripts/coding_guidelines/CodingGuidelines/EditorIntegrations/vim
+let g:coding_guidelines_linter = '/home/fsvenson/git/VisionSoftware/Application/FdMainAes/ExtDeps/AesScripts/coding_guidelines/CodingGuidelines/Language/C/coding_guidelines/coding_guidelines.py'
+let g:coding_guidelines_project_path = '/home/fsvenson/git/VisionSoftware/Application/FdMainAes'
+" let g:ale_c_coding_guidelines_project_path = '/home/fsvenson/git/VisionSoftware/Application/FdMainAes'
 
 " Display panel with \l (or ,l)
 noremap <silent> <Leader>l :TagbarToggle<cr>
@@ -282,9 +441,10 @@ noremap <silent> <Leader>d m':%s/\r$//<cr>:set fileformat=dos<cr>`'
 " noremap <silent> <Leader>d m':%!dos2unix<cr>:set fileformat=dos<cr>`'
 
 set foldmethod=syntax
+set foldlevel=20               " by defualt open folds to level 20
 set nofoldenable
 let g:xml_syntax_folding=1
-set colorcolumn=80   " Show where column 80 is.
+set colorcolumn=120   " Show where column 80 is.
 " colorscheme
 set t_Co=256
 set background=dark
@@ -293,14 +453,27 @@ colorscheme hybrid
 set guifont=Inconsolatazi4\ Medium\ 10
 syntax on
 
-" Octave syntax
+set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+"  let g:syntastic_always_populate_loc_list = 1
+"  let g:syntastic_auto_loc_list = 1
+"  let g:syntastic_check_on_open = 1
+"  let g:syntastic_check_on_wq = 0
+
+" Matlab syntax
 augroup filetypedetect
-  au! BufRead,BufNewFile *.m,*.oct set filetype=octave
+  au! BufRead,BufNewFile *.m,*.oct set filetype=matlab
+  au! BufRead,BufNewFile *.plt set filetype=gnuplot
 augroup END
 
+" autocmd FileType matlab source $HOME/.config/nvim/plugged/matlab-vim/ftplugin/matlab.vim
+" autocmd FileType matlab source $HOME/.config/nvim/plugged/vim-matlab/ftplugin/matlab.vim
+" autocmd FileType matlab source $HOME/.config/nvim/plugged/matlab-vim/syntax/matlab.vim
 " Use keywords from Octave syntax language file for autocomplete
 if has("autocmd") && exists("+omnifunc")
-   autocmd Filetype octave
+   autocmd Filetype matlab
    \	if &omnifunc == "" |
    \	setlocal omnifunc=syntaxcomplete#Complete |
    \	endif
@@ -313,8 +486,33 @@ set cscopetagorder=0 " Check cscope for definition of a symbol before ctags
 set cscopeprg=/usr/bin/cscope
 set cscopequickfix=s-,c-,d-,i-,t-,e-
 
-" :cs add ~/cscope.out ~/git/FdMainAes
-" :set csre
+fun! RefreshCscope()
+   !cscope_refresh
+   cs kill 0
+   cs add ~/cscope.out
+   cs reset
+   set csre
+endfun
+
+command! CScope call RefreshCscope()
+
+" let g:gutentags_project_root = "/home/fsvenson/git/VisionSoftware/Application/FdMainAes"
+" let g:gutentags_modules = ['ctags']
+"" enable gtags module
+let g:gutentags_modules = ['ctags']
+
+" config project root markers.
+let g:gutentags_project_root = ['.root']
+
+" generate datebases in my cache directory, prevent gtags files polluting my project
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+let g:gutentags_ctags_extra_args = ['--languages=+MatLab']
+
+" forbid gutentags adding gtags databases
+let g:gutentags_auto_add_gtags_cscope = 0
+let g:gutentags_ctags_exclude = ['*.js', '*.json', '*.c', '*.h', 'Build-*']
+" let g:gutentags_plus_nomap = 1
 
 " Find this C symbol
 nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR><C-O>:cw<CR>
@@ -364,7 +562,63 @@ nmap <silent> <leader>gD :Git! diff<cr>
 " Git diff current buffer
 nmap <silent> <leader>gd :Gdiff<cr>
 
+" {{{ Fugitive GitGutter and Git "
+" populate quicklist with commited version of current file - fugitive
+nnoremap <leader>gl :silent Glog<CR>
+nnoremap <leader>gc :Gcommit<CR>
+
+nnoremap <leader>gr :GitGutterRevertHunk<CR>
+nnoremap <leader>ga :GitGutterStageHunk<CR>
+nnoremap <leader>gp :GitGutterPreviewHunk<cr>
+
+autocmd FileType gitcommit setlocal textwidth=72
+
+" }}} Fugitive "
+
+" git conflic marker search
+nnoremap <leader>gC /^.*\(<<<\\|====\\|>>>>\).*$<cr>
+
 " set errorformat=\"%f\"\\,\ line\ %l\:\ %m
+"
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsSnippetDirectories=['UltiSnips', $HOME.'/git/AlvSnippets/Contrib/Vim/snippets', $HOME.'.config/nvim/plugged/neovim-matlab/snippets']
+
+function! ExpandLspSnippet()
+    call UltiSnips#ExpandSnippetOrJump()
+    if !pumvisible() || empty(v:completed_item)
+        return ''
+    endif
+
+    " only expand Lsp if UltiSnips#ExpandSnippetOrJump not effect.
+    let l:value = v:completed_item['word']
+    let l:matched = len(l:value)
+    if l:matched <= 0
+        return ''
+    endif
+
+    " remove inserted chars before expand snippet
+    if col('.') == col('$')
+        let l:matched -= 1
+        exec 'normal! ' . l:matched . 'Xx'
+    else
+        exec 'normal! ' . l:matched . 'X'
+    endif
+
+    if col('.') == col('$') - 1
+        " move to $ if at the end of line.
+        call cursor(line('.'), col('$'))
+    endif
+
+    " expand snippet now.
+    call UltiSnips#Anon(l:value)
+    return ''
+endfunction
+
+imap <C-b> <C-R>=ExpandLspSnippet()<CR>
+
 
 " SCONS
 autocmd BufRead,BufNewFile SConstruct set filetype=python
@@ -374,3 +628,92 @@ autocmd BufRead,BufNewFile *.r set filetype=R
 autocmd BufRead,BufNewFile *.json set filetype=javascript
 " Template files
 autocmd BufRead,BufNewFile *.template set filetype=c
+" 'cpp': ['nice', '-19', '/home/fsvenson/git/cquery/release/bin/cquery',
+"     '--log-file=/tmp/cq.log'
+" ],
+" 'c': ['nice', '-19', '/home/fsvenson/git/cquery/release/bin/cquery',
+"     '--log-file=/tmp/cq.log'
+" ],
+
+"  Clangd LSP {{{
+" let g:LanguageClient_serverCommands = {
+"             \     'cpp': ['nice', '-19', 'ccls',
+"             \         '--log-file=/tmp/ccls.log'
+"             \     ],
+"             \     'c': ['nice', '-19', 'ccls',
+"             \         '--log-file=/tmp/ccls.log'
+"             \     ],
+"             \     'python': ['nice', '-19',
+"             \         'pyls',
+"             \         '-vvv', '--log-file', '/tmp/pyls-log.txt'],
+"             \ }
+" let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+" let g:LanguageClient_settingsPath = '/home/fsvenson/.config/nvim/settings.json'
+" set completefunc=LanguageClient#complete
+" set formatexpr=LanguageClient_textDocument_rangeFormatting()
+" let g:LanguageClient_autoStart = 1
+" let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
+" let g:LanguageClient_loggingLevel = 'WARN'
+" let g:LanguageClient_serverStderr = '/tmp/LanguageServer.log'
+" let g:LanguageClient_diagnosticsList = "location"
+" let g:LanguageClient_selectionUI = "quickfix"
+" let g:LanguageClient_hasSnippetSupport = 0
+nmap <silent> ,d <Plug>(coc-definition)
+nmap <silent> <C-,> <Plug>(coc-references)
+nn <silent> K :call CocActionAsync('doHover')<cr>
+set updatetime=300
+au CursorHold * sil call CocActionAsync('highlight')
+au CursorHoldI * sil call CocActionAsync('showSignatureHelp')
+" nnoremap <silent> ,d :call LanguageClient#textDocument_definition()<CR>
+" nnoremap <silent> ,z :call LanguageClient#textDocument_rename()<CR>
+" nnoremap <silent> ,m :call LanguageClient_contextMenu()<CR>
+" nnoremap <silent> ,} :call LanguageClient#textDocument_hover()<CR>
+" nnoremap <silent> ,] :call LanguageClient#textDocument_implementation()<CR>
+" nnoremap <silent> ,r :call LanguageClient#textDocument_references({'includeDeclaration': v:false})<CR>:copen<CR>
+
+" augroup LanguageClient_config
+"   au!
+"   au BufEnter * let b:Plugin_LanguageClient_started = 0
+"   au User LanguageClientStarted setl signcolumn=yes
+"   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
+"   au User LanguageClientStopped setl signcolumn=auto
+"   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
+"   au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_documentHighlight() | endif
+" augroup END
+
+" {{{
+" ccls specifics
+" bases
+nn <silent> xb :call CocLocations('ccls','$ccls/inheritance')<cr>
+" bases of up to 3 levels
+nn <silent> xb :call CocLocations('ccls','$ccls/inheritance',{'levels':3})<cr>
+" derived
+nn <silent> xd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})<cr>
+" derived of up to 3 levels
+nn <silent> xD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
+
+" caller
+nn <silent> xc :call CocLocations('ccls','$ccls/call')<cr>
+" callee
+nn <silent> xC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+
+" $ccls/member
+" member variables / variables in a namespace
+nn <silent> xm :call CocLocations('ccls','$ccls/member')<cr>
+" member functions / functions in a namespace
+nn <silent> xf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
+" nested classes / types in a namespace
+nn <silent> xs :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
+
+nmap <silent> xt <Plug>(coc-type-definition)<cr>
+nn <silent> xv :call CocLocations('ccls','$ccls/vars')<cr>
+nn <silent> xV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
+
+nn xx x
+autocmd FileType python let b:coc_root_patterns = ['.fdmainaes-python', '.git', '.env']
+" }}}
+" }}}
+"
+source /mnt/d/review.vim
+
+if has('nvim') | set inccommand=split | endif

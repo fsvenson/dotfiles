@@ -1,8 +1,20 @@
 set -o vi
 
+export PATH=~/git/floating_fzf/bin:$PATH
+export PATH=/usr/local/bin:/opt/autoliv/bin:$PATH
+export PATH=~/.bin:$PATH
+export PATH=~/.cargo/bin:$PATH
+export PATH=~/.local/bin:$PATH
+export PATH=~/.cargo/bin:$PATH
+export PATH=~/.yarn/bin:$PATH
+# export PATH=/usr/bin:$PATH
+# export PATH=~/workdir/neovim-gtk-install/bin:$PATH
+
+setxkbmap -option caps:swapescape
+
 unalias egrep fgrep grep ls l. 2>/dev/null
-alias ll='ls --color=always -l'
-alias la='ls --color=always -la'
+alias ll='ls --color=always -lh'
+alias la='ls --color=always -lha'
 alias ls='ls --color=always'
 alias grep='grep --color=auto'
 alias rgr='grep -ri --color=auto'
@@ -10,21 +22,22 @@ alias gc='git commit'
 alias go='git checkout'
 alias gs='git status -s'
 alias reload=". ~/.zshrc && echo 'ZSH config reloaded from ~/.zshrc'"
-alias zshrc="vim ~/.zshrc && reload"
+alias zshrc="nvim ~/.zshrc && reload"
 alias ..='cd ..'
 alias ...='..;..'
 alias ....='...;..'
-alias fdm='cd $FDMAINAES'
-alias fds='cd ~/git/FdScripts'
+alias gg='git grep'
+alias x='xargs'
+alias g='grep'
+alias gvir='gvim --remote'
 
 autoload -U colors && colors
 autoload zcalc
 
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR='nvim'
+export VISUAL='nvim'
 export PAGER='less'
 export LESS=-MRXSi
-export FDMAINAES=$(cd ~/git/FdMainAes && pwd)
 
 unset beep
 set nobeep
@@ -35,8 +48,6 @@ export SAVEHIST=$HISTSIZE
 
 source ~/git/zsh-git-prompt/zshrc.sh
 export GIT_PROMPT_EXECUTABLE="haskell"
-
-export PATH=~/.local/bin:~/.bin:/usr/local/bin:/opt/autoliv/bin:"$PATH"
 
 export LC_NUMERIC=en_US
 
@@ -60,6 +71,10 @@ setopt EXTENDED_GLOB BARE_GLOB_QUAL
 
 bindkey '^I' expand-or-complete-prefix
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+# This way the completion script does not have to parse Bazel's options
+# repeatedly.  The directory in cache-path must be created manually.
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
 bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
@@ -148,18 +163,10 @@ autoload -Uz compinit
 compinit
 
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
-# __git_files () {
-#        _wanted files expl 'local files' _files
-# }
-# compdef -d git
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
 zmodload zsh/mapfile
 zmodload zsh/mathfunc
 
-# Development environment
-export LANG=en_US.UTF-8
-export O_DRIVE=/mnt/o/GRP
-export C_Libs=/home/fsvenson/Documents/CLibs
-export CODE_DEPS=/home/fsvenson/Documents/CodeDeps
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
