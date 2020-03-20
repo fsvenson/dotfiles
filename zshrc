@@ -170,3 +170,4 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 zmodload zsh/mapfile
 zmodload zsh/mathfunc
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
