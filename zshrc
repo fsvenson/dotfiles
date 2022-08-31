@@ -1,7 +1,6 @@
 set -o vi
 
 export PATH=~/git/floating_fzf/bin:$PATH
-export PATH=/usr/local/bin:/opt/autoliv/bin:$PATH
 export PATH=~/.bin:$PATH
 export PATH=~/.cargo/bin:$PATH
 export PATH=~/.local/bin:$PATH

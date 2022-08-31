@@ -5,7 +5,6 @@ filetype off                  " required
 
 call plug#begin()
 Plug 'tpope/vim-fugitive'
-" Git plugin not hosted on GitHub
 Plug 'wincent/command-t'
 Plug 'Yggdroot/indentLine'
 Plug 'godlygeek/tabular'
@@ -13,11 +12,8 @@ Plug 'flazz/vim-colorschemes'
 Plug 'morhetz/gruvbox'
 Plug 'Haron-Prime/Antares'
 Plug 'altercation/vim-colors-solarized'
-" Plug 'szw/vim-tags'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-" Plug 'davidhalter/jedi-vim'
-Plug 'majutsushi/tagbar'
 Plug 'Konfekt/FastFold'
 Plug 'airblade/vim-gitgutter'
 Plug 'eparreno/vim-matchit'
@@ -25,7 +21,6 @@ Plug 'idbrii/vim-hiinterestingword'   " allows for highlighting interesting word
 Plug 'junegunn/vim-peekaboo'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'spiiph/vim-space'
-Plug 'ton/vim-bufsurf'
 Plug 'tpope/vim-surround'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-commentary'
@@ -36,34 +31,40 @@ Plug 'mbbill/undotree'
 Plug 'kana/vim-operator-user'
 Plug 'haya14busa/vim-operator-flashy'
 Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
-" Plug 'w0rp/ale'
+Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'ludovicchabant/vim-gutentags'
-" Plug 'skywind3000/gutentags_plus'
+Plug 'antoinemadec/coc-fzf', {'branch': 'release'}
 Plug 'chrisbra/matchit'
 Plug 'daeyun/vim-matlab', { 'as': 'neovim-matlab' }
 Plug 'tdehaeze/matlab-vim'
 Plug 'TheZoq2/neovim-auto-autoread'
-" Plug 'autozimu/LanguageClient-neovim', {
-"             \ 'branch': 'next',
-"             \ 'do': 'bash install.sh',
-"             \ }
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'yuezk/vim-js'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'nvie/vim-flake8'
+Plug 'milkypostman/vim-togglelist'
+" Plug 'ekalinin/Dockerfile.vim'
+Plug 'lifepillar/pgsql.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
+Plug 'srivathsanmurali/OpenAPIValidate.vim'
+Plug 'chr4/nginx.vim'
+Plug 'embear/vim-uncrustify'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'fannheyward/telescope-coc.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
+Plug 'hashivim/vim-terraform'
+" Plug 'github/copilot.vim', {'branch': 'release'}
 " All of your Plugins must be added before the following line
 call plug#end()            " required
-" filetype plugin on
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
+
+" Load ESLint 8 compatible CoC plugin
+set runtimepath^=~/repos/coc-eslint
 
 set autoread
 "Autoreload files when changed externally
@@ -85,8 +86,8 @@ let g:mapleader = ","
 " Fast saving
 nmap <silent> <leader>w :w!<cr>
 " Fast editing of the _vimrc
-map <silent> <leader>v :e! ~/.vim/vimrc<cr>
-autocmd! bufwritepost vimrc source ~/.vimrc   " When vimrc is edited, reload it
+map <silent> <leader>v :e! ~/.config/nvim/init.vim<cr>
+autocmd! bufwritepost init.vim source ~/.config/nvim/init.vim   " When vimrc is edited, reload it
 
 " When pressing <leader>cd switch to the directory of the open buffer
 map <leader>cwd :cd %:p:h<cr>
@@ -127,45 +128,47 @@ set virtualedit=block          " allow cursor to be moved into empty space in vi
 set splitbelow                 " intuitive split placement
 set splitright                 " intuitive split placement
 set backspace=2
+set shortmess=aW   " Abbreviate messages to avoid 'hit-enter' prompts
+set cmdheight=2
 
 " Automatically resize vertical splits.
 autocmd WinEnter * :set winfixheight
 autocmd WinEnter * :wincmd =
 
 " Cursor color
-"  if &term =~ "xterm\\|rxvt|terminator"
-"    " use an green cursor in insert mode
-"    let &t_SI = "\<Esc>]12;green\x7"
-"    " use a red cursor otherwise
-"    let &t_EI = "\<Esc>]12;red\x7"
-"    silent !echo -ne "\033]12;red\007"
-"    " reset cursor when vim exits
-"    autocmd VimLeave * silent !echo -ne "\033]112\007"
-"    " use \003]12;gray\007 for gnome-terminal and rxvt up to version 9.21
-"  endif
+ if &term =~ "xterm\\|rxvt|terminator|screen-256color"
+   " use an green cursor in insert mode
+   let &t_SI = "\<Esc>]12;green\x7"
+   " use a red cursor otherwise
+   let &t_EI = "\<Esc>]12;red\x7"
+   silent !echo -ne "\033]12;red\007"
+   " reset cursor when vim exits
+   autocmd VimLeave * silent !echo -ne "\033]112\007"
+   " use \003]12;gray\007 for gnome-terminal and rxvt up to version 9.21
+ endif
 
 " Cursor shape (not working in terminator)?
-"  if &term =~ '^xterm\\|rxvt\\|terminator'
-"    " solid underscore
-"    let &t_SI .= "\<Esc>[4 q"
-"    " solid block
-"    let &t_EI .= "\<Esc>[2 q"
-"    " 1 or 0 -> blinking block
-"    " 3 -> blinking underscore
-"    " Recent versions of xterm (282 or above) also support
-"    " 5 -> blinking vertical bar
-"    " 6 -> solid vertical bar
-"  endif
+ if &term =~ '^xterm\\|rxvt\\|terminator|screen-256color'
+   " solid underscore
+   let &t_SI .= "\<Esc>[4 q"
+   " solid block
+   let &t_EI .= "\<Esc>[2 q"
+   " 1 or 0 -> blinking block
+   " 3 -> blinking underscore
+   " Recent versions of xterm (282 or above) also support
+   " 5 -> blinking vertical bar
+   " 6 -> solid vertical bar
+ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set expandtab        " Use the appropriate number of spaces to insert a <Tab>
-set shiftwidth=3     " Number of spaces to use for each step of (auto)indent
+set shiftwidth=2     " Number of spaces to use for each step of (auto)indent
 set tabstop=2        " Number of spaces that a <Tab> in the file counts for
 set smarttab         " <Tab> in front of a line indents to 'shiftwidth'
 set linebreak        " Wrap lines at a char in 'breakat' rather than last char
-set textwidth=120    " Maximum width of text that is being inserted
+set textwidth=88     " Maximum width of text that is being inserted
 set formatoptions-=c " Don't wrap comments
 set autoindent       " Auto indent
 set smartindent      " Do smart autoindenting when starting a new line
@@ -197,7 +200,7 @@ noremap <leader>d "+d
 noremap <leader>D "+D
 
 " Y consistent with D
-" nnoremap Y 0y$
+nnoremap Y 0y$
 
 " operator flashy - flashes the target of a y<target> command
 map y <Plug>(operator-flashy)
@@ -205,6 +208,7 @@ map y <Plug>(operator-flashy)
 
 " center window after jumping forward
 nnoremap n nzz
+nnoremap N Nzz
 nnoremap } }zz
 nnoremap { {zz
 
@@ -243,13 +247,15 @@ set showcmd
 set incsearch
 set hlsearch
 " tags
-set tags=tags;
+" set tags=tags;
 " filetype detection
 if has("autocmd")
   filetype plugin indent on
   augroup vimrcEx
   au!
   autocmd FileType text setlocal textwidth=78
+  autocmd FileType c,cpp setlocal shiftwidth=2 tabstop=8
+  autocmd FileType python setlocal shiftwidth=4 tabstop=4
 " jump to last known position
   autocmd BufReadPost *
     \ if line("'\"")  <= line("$") |
@@ -260,7 +266,6 @@ else
    set autoindent
 endif
 
-autocmd FileType python setlocal shiftwidth=4 tabstop=2
 
 " Whitespace handling
 match Todo /\s\+$/
@@ -330,7 +335,6 @@ set noswapfile
 
 " persistent undo
 set undodir=~/.vim/undodir
-" set undodir=/media/sf_FD/undodir
 set undofile
 set undolevels=700
 set undoreload=700
@@ -346,21 +350,33 @@ let g:undotree_DiffpanelHeight = 20
 
 " nnoremap <silent> <C-P> :FZF<CR>
 command! FZFag call fzf#run({
-            \ 'source': 'list-files . ../../../bazel-bin/external ../../',
+            \ 'source': 'find . -path "*.venv*" -prune -o -path "*node_modules*" -prune -o -path ./.svn -prune -o -path ./.git -prune -o -path "*pyc" -o -path ./vps/services/build -prune -prune -o -type f -print 2> /dev/null',
             \ 'sink': 'e',
             \ 'down': '40%',
             \ 'options': '--expect=ctrl-t,ctrl-v,ctrl-x'})
 nnoremap <silent> <C-P> :FZFag<CR>
-" nnoremap <silent> <C-P> :FZF<CR>
-" let g:ctrlp_match_window = 'max:32'
-" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard']
-" let g:ctrlp_max_files = 0         " Set no max file limit
-" let g:ctrlp_working_path_mode = 0 " Search from current directory instead of project root
-" let g:ctrlp_clear_cache_on_exit = 1
-" let g:ctrlp_custom_ignore = {
-"     \ 'file': '\v\.m$',
-"     \ 'dir':  '\v[\/](\.git$|Build|BuildScripts)'
-"     \ }
+
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(expand('<cword>')), 1,
+  \   fzf#vim#with_preview(), <bang>0)
+nnoremap <Leader>f :Rg<CR>
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+nnoremap <Leader>F :RG<CR>
+
+nnoremap <leader>b :Buffers<CR>
+
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 
 """"""""""""""""""""""""""""""
 " => Statusline
@@ -369,6 +385,7 @@ set laststatus=2   " Always hide the statusline
 
 " Format the statusline
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+set statusline^=%{coc#status()}
 
 function! CurDir()
     let curdir = substitute(getcwd(), '/Users/fsvenson', "~", "g")
@@ -386,22 +403,61 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Development
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:tagbar_ctags_bin='/usr/bin/ctags'  " Proper Ctags location
-let g:tagbar_compact=1 " Omit short help at the top
-let g:tagbar_autoclose=1
-let g:tagbar_width=32
-
 " {{{ Completion
-" let g:ycm_confirm_extra_conf = 0
-" let g:ycm_server_python_interpreter = '/usr/bin/python2'
-" let g:ycm_goto_buffer_command = 'horizontal-split'
-" always fill location list with ycm errors/warnings
-" let g:ycm_always_populate_location_list = 0
-" let g:ycm_auto_trigger=1
-" }}} YouCompleteMe
-" let g:deoplete#enable_at_startup = 1
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" use <tab> for trigger completion and navigate to the next complete item
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<Tab>" :
+      \ coc#refresh()
+
+if has('nvim-0.5.0')
+  nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+endif
+
+
+" GitHub Co-pilot
+imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
+let g:copilot_node_command =
+      \ "/se/r3dm/sw/centos-7-x86_64/inst/nodejs/16.13.0/bin/node"
+
+
+" allow to scroll in the preview
+set mouse=a
+
+" mappings
+nnoremap <silent> <space><space> :<C-u>CocFzfList<CR>
+nnoremap <silent> <space>a       :<C-u>CocFzfList diagnostics<CR>
+nnoremap <silent> <space>b       :<C-u>CocFzfList diagnostics --current-buf<CR>
+nnoremap <silent> <space>c       :<C-u>CocFzfList commands<CR>
+nnoremap <silent> <space>e       :<C-u>CocFzfList extensions<CR>
+nnoremap <silent> <space>l       :<C-u>CocFzfList location<CR>
+nnoremap <silent> <space>o       :<C-u>CocFzfList outline<CR>
+nnoremap <silent> <space>s       :<C-u>CocFzfList symbols<CR>
+nnoremap <silent> <space>p       :<C-u>CocFzfListResume<CR>
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Quickfix
+nmap <leader>qf :<C-u>CocCommand tsserver.executeAutofix<CR>
+
 " }}} Completion
 
 " {{{ Location Quickfix
@@ -411,40 +467,17 @@ nnoremap <leader>ll :call ToggleLocationList()<CR>
 nnoremap <leader>lq :call ToggleQuickfixList()<CR>
 " }}} Location Quickfix
 
- " let g:syntastic_python_checkers = ['flake8']
- " let g:syntastic_python_flake8_args='--ignore=E501'
- " let g:syntastic_python_flake8_exec = '/usr/bin/flake8'
 au! BufRead,BufNewFile *.json set filetype=json
 
-" Ignore line too long warnings
-" let g:ale_linters = {
-" \   'matlab': ['mlint'],
-" \   'json':   ['fixjson'],
-" \   'sh':     ['shellcheck'],
-" \}
-" " \   'c':      ['cquery'],
-" " \   'cpp':    ['cquery'],
-" let g:ale_python_pylint_options = '--max-line-length=120 --disable=C0103'
-" let g:ale_linters_explicit = 1
-
-set runtimepath+=/home/fsvenson/git/VisionSoftware/Application/FdMainAes/ExtDeps/AesScripts/coding_guidelines/CodingGuidelines/EditorIntegrations/vim
-let g:coding_guidelines_linter = '/home/fsvenson/git/VisionSoftware/Application/FdMainAes/ExtDeps/AesScripts/coding_guidelines/CodingGuidelines/Language/C/coding_guidelines/coding_guidelines.py'
-let g:coding_guidelines_project_path = '/home/fsvenson/git/VisionSoftware/Application/FdMainAes'
-" let g:ale_c_coding_guidelines_project_path = '/home/fsvenson/git/VisionSoftware/Application/FdMainAes'
-
-" Display panel with \l (or ,l)
-noremap <silent> <Leader>l :TagbarToggle<cr>
 map <silent> gt <C-]>
-" map <silent> gp :ptag <c-r><c-w><cr>
 
 noremap <silent> <Leader>d m':%s/\r$//<cr>:set fileformat=dos<cr>`'
-" noremap <silent> <Leader>d m':%!dos2unix<cr>:set fileformat=dos<cr>`'
 
 set foldmethod=syntax
 set foldlevel=20               " by defualt open folds to level 20
 set nofoldenable
 let g:xml_syntax_folding=1
-set colorcolumn=120   " Show where column 80 is.
+set colorcolumn=80   " Show where column 80 is.
 " colorscheme
 set t_Co=256
 set background=dark
@@ -454,13 +487,7 @@ set guifont=Inconsolatazi4\ Medium\ 10
 syntax on
 
 set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-
-"  let g:syntastic_always_populate_loc_list = 1
-"  let g:syntastic_auto_loc_list = 1
-"  let g:syntastic_check_on_open = 1
-"  let g:syntastic_check_on_wq = 0
 
 " Matlab syntax
 augroup filetypedetect
@@ -468,9 +495,6 @@ augroup filetypedetect
   au! BufRead,BufNewFile *.plt set filetype=gnuplot
 augroup END
 
-" autocmd FileType matlab source $HOME/.config/nvim/plugged/matlab-vim/ftplugin/matlab.vim
-" autocmd FileType matlab source $HOME/.config/nvim/plugged/vim-matlab/ftplugin/matlab.vim
-" autocmd FileType matlab source $HOME/.config/nvim/plugged/matlab-vim/syntax/matlab.vim
 " Use keywords from Octave syntax language file for autocomplete
 if has("autocmd") && exists("+omnifunc")
    autocmd Filetype matlab
@@ -480,39 +504,6 @@ if has("autocmd") && exists("+omnifunc")
 endif
 
 set path+=..
-
-set cscopetag        " Use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
-set cscopetagorder=0 " Check cscope for definition of a symbol before ctags
-set cscopeprg=/usr/bin/cscope
-set cscopequickfix=s-,c-,d-,i-,t-,e-
-
-fun! RefreshCscope()
-   !cscope_refresh
-   cs kill 0
-   cs add ~/cscope.out
-   cs reset
-   set csre
-endfun
-
-command! CScope call RefreshCscope()
-
-" let g:gutentags_project_root = "/home/fsvenson/git/VisionSoftware/Application/FdMainAes"
-" let g:gutentags_modules = ['ctags']
-"" enable gtags module
-let g:gutentags_modules = ['ctags']
-
-" config project root markers.
-let g:gutentags_project_root = ['.root']
-
-" generate datebases in my cache directory, prevent gtags files polluting my project
-let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-let g:gutentags_ctags_extra_args = ['--languages=+MatLab']
-
-" forbid gutentags adding gtags databases
-let g:gutentags_auto_add_gtags_cscope = 0
-let g:gutentags_ctags_exclude = ['*.js', '*.json', '*.c', '*.h', 'Build-*']
-" let g:gutentags_plus_nomap = 1
 
 " Find this C symbol
 nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR><C-O>:cw<CR>
@@ -532,8 +523,6 @@ nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
 " Add cscope.out
 nmap <leader>ca :cs add .git/cscope.out .<cr>
-
-nmap <leader>b :cgetfile .do.log<cr>:copen<cr>
 
 " Move about the quickfix list more easily
 nmap <leader>n :cnext<cr>
@@ -581,43 +570,44 @@ nnoremap <leader>gC /^.*\(<<<\\|====\\|>>>>\).*$<cr>
 " set errorformat=\"%f\"\\,\ line\ %l\:\ %m
 "
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<c-tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-let g:UltiSnipsSnippetDirectories=['UltiSnips', $HOME.'/git/AlvSnippets/Contrib/Vim/snippets', $HOME.'.config/nvim/plugged/neovim-matlab/snippets']
+" let g:UltiSnipsExpandTrigger="<c-tab>"
+" let g:UltiSnipsJumpForwardTrigger="<c-tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" let g:UltiSnipsSnippetDirectories=['~/UltiSnips']
 
-function! ExpandLspSnippet()
-    call UltiSnips#ExpandSnippetOrJump()
-    if !pumvisible() || empty(v:completed_item)
-        return ''
-    endif
 
-    " only expand Lsp if UltiSnips#ExpandSnippetOrJump not effect.
-    let l:value = v:completed_item['word']
-    let l:matched = len(l:value)
-    if l:matched <= 0
-        return ''
-    endif
+" function! ExpandLspSnippet()
+"     call UltiSnips#ExpandSnippetOrJump()
+"     if !pumvisible() || empty(v:completed_item)
+"         return ''
+"     endif
 
-    " remove inserted chars before expand snippet
-    if col('.') == col('$')
-        let l:matched -= 1
-        exec 'normal! ' . l:matched . 'Xx'
-    else
-        exec 'normal! ' . l:matched . 'X'
-    endif
+"     " only expand Lsp if UltiSnips#ExpandSnippetOrJump not effect.
+"     let l:value = v:completed_item['word']
+"     let l:matched = len(l:value)
+"     if l:matched <= 0
+"         return ''
+"     endif
 
-    if col('.') == col('$') - 1
-        " move to $ if at the end of line.
-        call cursor(line('.'), col('$'))
-    endif
+"     " remove inserted chars before expand snippet
+"     if col('.') == col('$')
+"         let l:matched -= 1
+"         exec 'normal! ' . l:matched . 'Xx'
+"     else
+"         exec 'normal! ' . l:matched . 'X'
+"     endif
 
-    " expand snippet now.
-    call UltiSnips#Anon(l:value)
-    return ''
-endfunction
+"     if col('.') == col('$') - 1
+"         " move to $ if at the end of line.
+"         call cursor(line('.'), col('$'))
+"     endif
 
-imap <C-b> <C-R>=ExpandLspSnippet()<CR>
+"     " expand snippet now.
+"     call UltiSnips#Anon(l:value)
+"     return ''
+" endfunction
+
+" imap <C-b> <C-R>=ExpandLspSnippet()<CR>
 
 
 " SCONS
@@ -625,61 +615,31 @@ autocmd BufRead,BufNewFile SConstruct set filetype=python
 autocmd BufRead,BufNewFile SConscript set filetype=python
 " R or S
 autocmd BufRead,BufNewFile *.r set filetype=R
-autocmd BufRead,BufNewFile *.json set filetype=javascript
+" autocmd BufRead,BufNewFile *.json set filetype=javascript
+autocmd BufRead,BufNewFile Dockerfile* set filetype=dockerfile
+autocmd BufRead,BufNewFile *.dock set filetype=dockerfile
 " Template files
-autocmd BufRead,BufNewFile *.template set filetype=c
-" 'cpp': ['nice', '-19', '/home/fsvenson/git/cquery/release/bin/cquery',
-"     '--log-file=/tmp/cq.log'
-" ],
-" 'c': ['nice', '-19', '/home/fsvenson/git/cquery/release/bin/cquery',
-"     '--log-file=/tmp/cq.log'
-" ],
-
-"  Clangd LSP {{{
-" let g:LanguageClient_serverCommands = {
-"             \     'cpp': ['nice', '-19', 'ccls',
-"             \         '--log-file=/tmp/ccls.log'
-"             \     ],
-"             \     'c': ['nice', '-19', 'ccls',
-"             \         '--log-file=/tmp/ccls.log'
-"             \     ],
-"             \     'python': ['nice', '-19',
-"             \         'pyls',
-"             \         '-vvv', '--log-file', '/tmp/pyls-log.txt'],
-"             \ }
-" let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
-" let g:LanguageClient_settingsPath = '/home/fsvenson/.config/nvim/settings.json'
-" set completefunc=LanguageClient#complete
-" set formatexpr=LanguageClient_textDocument_rangeFormatting()
-" let g:LanguageClient_autoStart = 1
-" let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
-" let g:LanguageClient_loggingLevel = 'WARN'
-" let g:LanguageClient_serverStderr = '/tmp/LanguageServer.log'
-" let g:LanguageClient_diagnosticsList = "location"
-" let g:LanguageClient_selectionUI = "quickfix"
-" let g:LanguageClient_hasSnippetSupport = 0
 nmap <silent> ,d <Plug>(coc-definition)
 nmap <silent> <C-,> <Plug>(coc-references)
 nn <silent> K :call CocActionAsync('doHover')<cr>
 set updatetime=300
 au CursorHold * sil call CocActionAsync('highlight')
 au CursorHoldI * sil call CocActionAsync('showSignatureHelp')
-" nnoremap <silent> ,d :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> ,z :call LanguageClient#textDocument_rename()<CR>
-" nnoremap <silent> ,m :call LanguageClient_contextMenu()<CR>
-" nnoremap <silent> ,} :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> ,] :call LanguageClient#textDocument_implementation()<CR>
-" nnoremap <silent> ,r :call LanguageClient#textDocument_references({'includeDeclaration': v:false})<CR>:copen<CR>
 
-" augroup LanguageClient_config
-"   au!
-"   au BufEnter * let b:Plugin_LanguageClient_started = 0
-"   au User LanguageClientStarted setl signcolumn=yes
-"   au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
-"   au User LanguageClientStopped setl signcolumn=auto
-"   au User LanguageClientStopped let b:Plugin_LanguageClient_stopped = 0
-"   au CursorMoved * if b:Plugin_LanguageClient_started | sil call LanguageClient#textDocument_documentHighlight() | endif
-" augroup END
+let g:sql_type_default = 'pgsql'
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
+
+let g:coc_disable_startup_warning = 1
+
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 " {{{
 " ccls specifics
@@ -693,7 +653,7 @@ nn <silent> xd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true})
 nn <silent> xD :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':3})<cr>
 
 " caller
-nn <silent> xc :call CocLocations('ccls','$ccls/call')<cr>
+nn <silent> xc :call CocLocations('ccls','$ccls/call',{'hierarchy':v:true})<cr>
 " callee
 nn <silent> xC :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
 
@@ -710,10 +670,50 @@ nn <silent> xv :call CocLocations('ccls','$ccls/vars')<cr>
 nn <silent> xV :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
 
 nn xx x
-autocmd FileType python let b:coc_root_patterns = ['.fdmainaes-python', '.git', '.env']
+autocmd FileType python let b:coc_root_patterns = ['pyrightconfig.json', '.git']
 " }}}
 " }}}
 "
-source /mnt/d/review.vim
 
 if has('nvim') | set inccommand=split | endif
+
+let g:clipboard = {
+      \   'name': 'xclip',
+      \   'copy': {
+      \      '+': 'xclip -selection clipboard',
+      \      '*': 'xclip -selection clipboard',
+      \    },
+      \   'paste': {
+      \      '+': 'xclip -selection clipboard -o',
+      \      '*': 'xclip -selection clipboard -o',
+      \   },
+      \   'cache_enabled': 1,
+      \ }
+
+" Markdown preview
+let g:mkdp_open_to_the_world = 1
+let g:mkdp_echo_preview_url = 1
+let g:mkdp_port = '5000'
+let g:mkdp_refresh_slow = 1
+
+let g:python3_host_prog = '/se/home/fresv/.pyvenvs/vps_dev/bin/python3'
+
+" Telescope
+lua require('telescope').load_extension('coc')
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+
+" " tree-sitter
+" lua <<EOF
+" require'nvim-treesitter.configs'.setup {
+"   ensure_installed = {"python", "javascript", "c", "cpp", "bash", "json", "tsx"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+"   ignore_install = {}, -- List of parsers to ignore installing
+"   highlight = {
+"     enable = true, -- false will disable the whole extension
+"     disable = {"bash"},  -- list of language that will be disabled
+"   },
+" }
+" EOF
+
